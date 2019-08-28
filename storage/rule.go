@@ -734,6 +734,8 @@ const (
 	opNotPresent = "notpresent"
 	opPrefix     = "prefix"
 	opSuffix     = "suffix"
+	opIsOneOf    = "isoneof"
+	opIsNotOneOf = "isnotoneof"
 )
 
 var (
@@ -752,6 +754,8 @@ var (
 		opNotPresent: {},
 		opPrefix:     {},
 		opSuffix:     {},
+		opIsOneOf:    {},
+		opIsNotOneOf: {},
 	}
 	noValueOperators = map[string]struct{}{
 		opEmpty:      {},
@@ -760,12 +764,14 @@ var (
 		opNotPresent: {},
 	}
 	stringOperators = map[string]struct{}{
-		opEQ:       {},
-		opNEQ:      {},
-		opEmpty:    {},
-		opNotEmpty: {},
-		opPrefix:   {},
-		opSuffix:   {},
+		opEQ:         {},
+		opNEQ:        {},
+		opEmpty:      {},
+		opNotEmpty:   {},
+		opPrefix:     {},
+		opSuffix:     {},
+		opIsOneOf:    {},
+		opIsNotOneOf: {},
 	}
 	numberOperators = map[string]struct{}{
 		opEQ:         {},
@@ -776,6 +782,8 @@ var (
 		opGTE:        {},
 		opPresent:    {},
 		opNotPresent: {},
+		opIsOneOf:    {},
+		opIsNotOneOf: {},
 	}
 	booleanOperators = map[string]struct{}{
 		opTrue:       {},
@@ -824,6 +832,10 @@ func matchesString(c constraint, v string) bool {
 		return strings.HasPrefix(strings.TrimSpace(v), value)
 	case opSuffix:
 		return strings.HasSuffix(strings.TrimSpace(v), value)
+	case opIsOneOf:
+		return strings.Contains(fmt.Sprintf(",%s,", strings.TrimSpace(value)), fmt.Sprintf(",%s,", strings.TrimSpace(v)))
+	case opIsNotOneOf:
+		return !strings.Contains(fmt.Sprintf(",%s,", strings.TrimSpace(value)), fmt.Sprintf(",%s,", strings.TrimSpace(v)))
 	}
 	return false
 }
@@ -844,6 +856,13 @@ func matchesNumber(c constraint, v string) (bool, error) {
 	n, err := strconv.ParseFloat(v, 64)
 	if err != nil {
 		return false, fmt.Errorf("parsing number from %q", v)
+	}
+
+	switch c.Operator {
+	case opIsOneOf:
+		return strings.Contains(fmt.Sprintf(",%s,", strings.TrimSpace(c.Value)), fmt.Sprintf(",%s,", strings.TrimSpace(v))), nil
+	case opIsNotOneOf:
+		return !strings.Contains(fmt.Sprintf(",%s,", strings.TrimSpace(c.Value)), fmt.Sprintf(",%s,", strings.TrimSpace(v))), nil
 	}
 
 	value, err := strconv.ParseFloat(c.Value, 64)

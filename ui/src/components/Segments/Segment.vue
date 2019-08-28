@@ -323,7 +323,9 @@ const STRING_OPERATORS = {
   empty: "IS EMPTY",
   notempty: "IS NOT EMPTY",
   prefix: "HAS PREFIX",
-  suffix: "HAS SUFFIX"
+  suffix: "HAS SUFFIX",
+  isoneof: "IS ONE OF",
+  isnotoneof: "IS NOT ONE OF"
 };
 
 const NUMBER_OPERATORS = {
@@ -334,7 +336,9 @@ const NUMBER_OPERATORS = {
   gt: ">",
   gte: ">=",
   present: "IS PRESENT",
-  notpresent: "IS NOT PRESENT"
+  notpresent: "IS NOT PRESENT",
+  isoneof: "IS ONE OF",
+  isnotoneof: "IS NOT ONE OF"
 };
 
 const BOOLEAN_OPERATORS = {
